@@ -1,0 +1,14 @@
+//Replace existing Choose File option in Entity form with a icon/label/image
+//Place this code inside Entity form JS
+
+$(document).ready(function() {
+
+$('#AttachFile').hide();
+$('#AttachFileLabel').append('<br><label for="AttachFile" id="testlabel" style="cursor:pointer; background-color: #347968; border: 1px solid #347968; color: #FFF;border-radius: 6px;padding: 10px 15px;font-size: 16px;">Upload</label>');
+$('input[type="file"]').change(function() { 
+  $('#label1').remove();
+               var filname= $('#AttachFile')[0].value;
+               filname = filname.replace(/^.*\\/,"");
+                $('<div id="label1"><br>' +filname+'</div>').insertAfter('#testlabel');
+            }); 
+});
