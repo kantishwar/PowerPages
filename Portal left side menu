@@ -1,6 +1,758 @@
 //Header Web template
 
+{% comment %}
+Assign liquid variables for Time and greeting
+{% endcomment %}
 
+{% assign defaultlang = settings['LanguageLocale/Code'] | default: 'en-us' %}
+{% assign homeurl = website.mspp_partialurl %}
+{% assign varTileGrouping = request.params["tilegrouping"] %}
+{% assign pagetitle = page.title %}
+
+<script>
+//alert("{{pagetitle}}");
+  </script>
+
+
+
+{% comment %}
+Include Fetch xml to get names of categories(Web link sets) if the user has a persona of student
+{% endcomment %}
+{% include "Weblink sets" %}
+
+<!-- modal show fade bg-primary bg-opacity-50 d-block style="--bs-modal-border-radius: 1rem; background: rgba(15, 128, 143, 0.45);"-->
+<!-- include loading modal for reference everywhere -->
+<div aria-labelledby="loadingSpinnerLabel" aria-hidden="true" class="modal show fade bg-primary bg-opacity-50"
+  id="loadingSpinner" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered d-flex justify-content-center align-items-center">
+    <!-- Add the bootstrap spinner -->
+    <div class="spinner-border text-white" role="status" style="width: 10rem; height: 10rem;">
+      <span class="visually-hidden" id="loadingSpinnerLabel">Loading...</span>
+    </div>
+  </div>
+</div>
+
+<!--Header-->
+<header>
+  <!--Title for my imperial and menu-->
+  <nav class="navbar navbar-expand bg-imperialnavy py-3" aria-label="Main navigation">
+    <div class="container-fluid px-md-5">
+      <a class="fixed-top sr-only-focusable bg-secondary text-white col-2 p-2" href="#content">Skip to main
+        content</a>
+      <div class="d-flex">
+        <!-- My Imperial Heading text -->
+        <div class="">
+          <a class=" navbar-brand  " href="/" title="My Imperial Home">
+            <span class="sr-only">My Imperial</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="200" viewBox="0 0 274 30.09"
+              class="col-7 col-md-10 col-xl-12" role="img">
+              <title>Imperial College London</title>
+              <g fill="#fff">
+                <polygon
+                  points="113.63 0 113.63 30.09 133.19 30.09 133.19 24.83 119.35 24.83 119.35 17.3 131.99 17.3 131.99 12.19 119.35 12.19 119.35 5.27 133.19 5.27 133.19 0 113.63 0">
+                </polygon>
+                <path
+                  d="M89.86,4.81H85.65V15h4.21c3.3,0,5.72-1.59,5.72-5.07s-2.42-5.07-5.72-5.07m.3,15H85.65V30.05H79.93V0H90.16c6.42,0,11.44,2.91,11.44,9.93s-5.06,9.93-11.44,9.93"
+                  transform="translate(0 0.05)"></path>
+                <polygon
+                  points="182.84 0 182.84 5.27 189.91 5.27 189.91 24.83 182.84 24.83 182.84 30.09 202.71 30.09 202.71 24.83 195.63 24.83 195.63 5.27 202.71 5.27 202.71 0 182.84 0">
+                </polygon>
+                <path
+                  d="M163.66,9.28c0,3.63-2.1,4.77-5.72,4.77h-4.81V4.81h4.81c3.92,0,5.72,1.46,5.72,4.47m6,0c0-7-4.81-9.33-11.13-9.33H147.41v30.1h5.72V18.91h5.6l5.83,11.15h6.33l-6.46-12.34c3.14-1.4,5.25-4.09,5.25-8.43"
+                  transform="translate(0 0.05)"></path>
+                <path d="M227.79,5.29l4.11,13.28h-8.22ZM224,0l-9.93,30.1h6l2-6.62h11.24l2.05,6.62h6L231.55,0Z"
+                  transform="translate(0 0.05)"></path>
+                <polygon points="254.39 0 254.39 30.09 274 30.09 274 24.83 260.11 24.83 260.11 0 254.39 0"></polygon>
+                <polygon
+                  points="57.26 0 50.04 17.69 42.81 0 34.69 0 34.69 30.09 40.11 30.09 40.11 7.59 47.03 23.47 47.33 23.47 52.74 23.47 53.05 23.47 59.97 7.59 59.97 30.09 65.38 30.09 65.38 0 57.26 0">
+                </polygon>
+                <polygon
+                  points="0 0 0 5.27 7.07 5.27 7.07 24.83 0 24.83 0 30.09 19.86 30.09 19.86 24.83 12.79 24.83 12.79 5.27 19.86 5.27 19.86 0 0 0">
+                </polygon>
+              </g>
+            </svg>
+          </a>
+        </div>
+      </div>
+  </nav>
+  </div>
+  <!-- Side menu navigation using offcanvas -->
+  <div class="offcanvas offcanvas-start bg-imperialnavy text-light" id="offcanvas" data-bs-keyboard="true"
+    data-bs-scroll="false" data-bs-backdrop="true">
+    <!-- Menu heading section -->
+    <div class="offcanvas-header">
+      <div class="container">
+        <!-- Close button -->
+        <div class="row  height d-flex float-end">
+          <div class="col-12 mx-2 my-2 align-content-center">
+            <a href="#" class="fa fa-chevron-left btn btn-imperialnavy" data-bs-dismiss="offcanvas" aria-label="Close menu"
+              tabindex="0"></a>
+          </div>
+        </div>
+        <!-- Row for displaying user name, picture and settings -->
+        <div class="row px-5 height d-flex float-start">
+          <!-- User image column -->
+          <div class="col-2 px-1">
+            {% if user %}
+            <img src="/xrm-adx/images/contact_photo.png" alt="User image"
+              class=" text-center img-fluid rounded-circle mb-1" width="120" height="120">
+            {% endif %}
+          </div>
+          <!-- User name container -->
+          <div class="col-10">
+            <div class="">
+              <!-- Logic to display user name or sign in functionality if not signed in -->
+              <h2 class="offcanvas-title fs-4"><span class="text-white">
+                  {% if user %}
+                    {% if user.ic_preferredfullname and user.ic_preferredfullname != " " %} 
+                      {{ user.ic_preferredfullname}} 
+                    {%else%} 
+                      {{user.fullname}}
+                    {% endif %}
+                  {% else %}
+                  <a class="text-decoration-none text-white"
+                    href="{% if homeurl%}/{{ homeurl }}{% endif %}{{ website.sign_in_url_substitution }}">Sign
+                    in</a>
+                  {% endif %}
+                </span>
+              </h2>
+            </div>
+            <!--Settings cog 
+                    <div class="col-2 align-self-end py-2">
+                      <span><i class="fa-solid fa-gear text-white"></i></span>
+                    </div>
+  -->
+
+          </div>
+          <!-- Final div for spacing -->
+          <div class="col-2">
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- Dynamic menu list items based on the users role -->
+    <div class="offcanvas-body px-0">
+      <div class="container-fluid">
+        <!-- Search bar for menu -->
+        <!--<div class="row height d-flex justify-content-center align-items-left">
+              <div class="col-10 mx-2 my-2 ">-->
+        <!-- Defined an extra class in the scss for search-box-input to style and add icon -->
+        <!--<input type="search" class="form-control rounded-pill shadow search-box-input bg-white"
+                  placeholder="Search" id="MenuSearchBox" aria-label="Search Bar Menu">
+              </div>
+            </div>-->
+        <!-- Row for menu items -->
+        <div class="row height d-flex justify-content-center align-items-end flex-column">
+          <div class="col-10 p-1">
+            <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-start" id="menu">
+              <!-- Static menu item for all tiles that toggles the all tiles tab pane -->
+              <li class="nav-item py-1">
+                <a href="{{ sitemarkers['Home'].url | append: '?&tilegrouping=home'}}"
+                  class="nav-link text-truncate text-white fs-5">
+                  <span class="ms-1 d-sm-inline">Home</span><i class="fa-solid fa-caret-right px-2"></i>
+                </a>
+              </li>
+             
+            </ul>
+          </div>
+
+          <div class="mt-5">
+            <!--Footer for logout functionality and info message, only displays if user is logged in-->
+            {%if user %}
+            <div class="navbar navbar-default navbar-fixed-bottom">
+
+              <div class="d-flex flex-column">
+                <span class="bg-white rounded-pill shadow px-4 me-2  d-block">
+                  <a class="text-decoration-none fs-5"
+                    href="{% if homeurl%}/{{ homeurl }}{% endif %}{{ website.sign_out_url_substitution }}"
+                    aria-label="Log out"><i class="fas fa-power-off"></i>&nbsp;Log
+                    out
+                  </a></span>
+                <div class="row height justify-content-center py-2">
+                  <div class="col-12 px-4 fs-6 text-white">
+                    If you need any help, please raise a ticket with <a
+                      href="https://www.imperial.ac.uk/admin-services/ict/contact-ict-service-desk/" target="_blank"
+                      class="text-white text-decoration-none">ASK ICT <span class="visually-hidden"> (opens in a new
+                        tab)</span></a> or <a href="tel:+44 0 207594 9000" class="text-decoration-none text-white"> you
+                      can call us
+                      on +44 (0)20 7594 9000</a>.
+                  </div>
+                </div>
+              </div>
+            </div>
+            {% endif %}
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</header>
+<!-- end header element -->
+
+<!--Class to make rounded corners hidden until sm screen size-->
+<div class="bg-imperialnavy p-0 m-0">
+  <div class="container-fluid px-md-5 mb-4">
+    <div class="row">
+      <!-- Button to toggle side menu -->
+      <div class="mt-md-3 mt-2 col-1 text-left">
+      {% if user %} 
+        <a href="#" class="sidebar-toggle " aria-label="Menu" data-bs-toggle="offcanvas" data-bs-target="#offcanvas">
+          <i class="hamburger align-self-center"></i>
+        </a>
+      {% endif %}
+      </div>
+      <div class="mt-2 mt-md-3 col-10">
+        
+        <h1 id = "portalPageTitle" class="text-white text-center fw-bold text-wrap">{{page.title}}</h1>
+      </div>
+      <div class="col-1"></div>
+    </div>
+  </div>
+  <!-- Rounded corner header-->
+  <div class="py-2 mt-0 rounded-header-top bg-white d-block">
+  </div> <!-- end rounded corner header-->
+</div> <!-- end primary -->
+
+<div class="min-vh-100"> <!--- start in header and closing div will be found in footer -->
+<div class="container-fluid px-md-5"> <!--- start in header and closing div will be found in footer -->
 
 //Home page copy 
+
+
+{% comment %} Assign liquid variables for Time and greeting and Tile Grouping URL parameter {% endcomment %} 
+{% assign time = 'now' | date: '%H' %} {% assign greeting = "" %} {% assign varTileGrouping = request.params["tilegrouping"] %} 
+{% comment %} Include Fetch xml to get names of categories(Web link sets) if the user has a persona of student {% endcomment %} 
+{% include "Weblink sets" %} 
+{% if user %}
+
+{% if user.ic_gssoprofileupdated != true %}
+<script>window.location.href= '/profile';
+</script>
+{%endif%}
+
+<!-- Search bar mobile view -->
+<!--
+<div class="position-absolute top-0 start-50 translate-middle col-6 d-sm-none">
+  <input type="search" class="form-control rounded-pill shadow search-box-input bg-white" placeholder="Search" id="HeaderSearchBoxSm" aria-label="Search Bar Mobile" />
+</div>
+-->
+
+<!-- Search desktop view -->
+<div class="d-none d-sm-block">
+  <!-- Search bar non mobile -->
+  <div class="my-3 d-flex justify-content-center align-items-center py-2">
+    <div class="col-6 col-lg-4">
+      <input type="search" class="form-control rounded-pill shadow search-box-input" placeholder="Search" id="HeaderSearchBox" aria-label="Search" />
+    </div>
+  </div>
+</div>
+
+<!-- end of search-->
+
+<!-- Start of Main page section -->
+<section class="mt-2">
+  <!-- start of home page greetings-->
+  <div class="col-12 text-center"> 
+    <!-- {{user.ic_gssob2cmapping}}  -->
+    <div class="fs-2 h2">
+      {% if user %} {% assign greeting = "Welcome" %} {% if user.ic_preferredfirstname %} {{greeting}}, {{ user.ic_preferredfirstname}}! 
+      {% else %} {{greeting}}, {{user.firstname}}! {% endif %} {% endif %}</div>
+  </div>
+  
+  <!-- end of home page greetings -->
+</section>
+
+<!-- start of general message content snippet -->
+{{ snippets["PS/HomePage/GeneralMessage"] }}
+<!-- end of general message content snippet -->
+
+<!-- end of Main page section -->
+{% else %}
+<!-- redirect to the sign in page and also include the query parameters if there are any -->
+{% assign queryParams = "%2F" %} {% assign queryParams = request.query | escape %}
+<script>
+  
+  window.location.href = '/SignIn?returnUrl=/{{ queryParams }}';
+</script>
+<div class="col-12 text-center">
+  <a class="btn btn-primary" href="{% if homeurl%}/{{ homeurl }}{% endif %}{{ website.sign_in_url_substitution }}">Sign in</a>
+</div>
+
+{% endif %} {% assign vartileGroupingHomeActive ="active" %} {% if varTileGrouping and varTileGrouping != "home" %} {% assign vartileGroupingHomeActive = "" %} {% endif %}
+
+<section class="">
+  <!-- Navigation tiles to show different tile groupings 
+  <nav>
+    <div class="nav nav-tabs nav-pills justify-content-center border-bottom-0" id="nav-pills" role="tablist">
+      {% if user %}
+      <!-- Home tab is static with id of 0, shown as active only if varTileGrouping != 'Home' 
+      <button class="nav-link rounded-pill {{vartileGroupingHomeActive}}" id="0" data-bs-toggle="tab" type="button" role="tab" aria-controls="nav-home" aria-selected="true" data-bs-target="#nav-home" aria-label="Home">Home</button>
+      {% endif %}
+      <!--Other tabs are only visible in this specific portal via the FetchXML  
+      {% for w in qryWebLinkSets.results.entities %} {% assign vartileGroupingActive = "" %} {% if w.mspp_name == varTileGrouping %} {% assign vartileGroupingActive = "active" %}{% endif %} 
+      {% assign weblinksCount = weblinks[{{w.mspp_name}}].Weblinks %} 
+      {%if weblinksCount.size == 0 %} {% else %}
+      <button class="nav-link rounded-pill  {{vartileGroupingActive}}" id="{{w.mspp_name}}" data-bs-toggle="tab" data-bs-target="#nav-{{w.mspp_name}}" type="button" role="tab" aria-controls="nav-{{w.mspp_name}}" aria-selected="false" data-weblinkcount="{{weblinksCount.size}}" aria-label="{{w.mspp_name}}">{{w.mspp_name}}</button>
+      {%endif%} {% endfor %} 
+    </div>
+  </nav> -->
+
+  <!-- Tile Groupings -->
+  <div class="tab-content" id="nav-Content">
+    <!--Home tab-->
+    <!-- A single tab pane contains all the tiles -->
+    <div class="tab-pane {{vartileGroupingHomeActive}}  show p-3 m-3" id="nav-home">
+      <!-- Creates different number of columns based on screen size -->
+      <div class="row row-cols-2 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-5 g-md-5 g-3 justify-content-start">
+        <!-- Outer For Loop gets all the weblinksets -->
+        {% for g in qryWebLinkSets.results.entities %}
+
+        <!-- Assign the Colour and Weblink variables -->
+        {% assign varNavAdmin1 = weblinks[{{g.mspp_name}}]%} {% assign varNavColor = weblinks[{{g.mspp_name}}].name | downcase | default: 'admin' %} 
+        {% assign varNavColorDark = weblinks[{{g.mspp_name}}].name | downcase | default: 'admin' | append: "dark" %}
+
+        <!-- Loop through each link in the weblink set variable to display all the tiles as a column -->
+        {% for link in varNavAdmin1.weblinks %}
+        {% assign linkobj = entities.mspp_weblink[{{link.id}}] %}
+        
+        {% if link.name == 'Personal Details' %}     
+         
+                <div class="col" data-title="{{link.name}}">
+          <!-- Create the cards -->
+
+          <div class="card h-100  bg-{{varNavColor}}">
+            <div class="card-body">
+              <!-- Align the icon on mobile view to the left hand side of the card -->
+              <div class="d-flex justify-content-start">
+                <!-- Info icon to toggle popover with the card description on mobile view -->
+                <i class="fa-solid fa-circle-info text-{{varNavColorDark}} text-center d-block d-sm-none" tabindex="0" data-bs-trigger="focus" data-bs-toggle="popover" data-timeout="3000" data-bs-placement="top" data-bs-content="{{link.description}}" style="position: relative; z-index: 2;"></i>
+              </div>
+
+              <!-- Tile icons made dynamic based on the tile -->
+              <div class="d-flex justify-content-center py-2">
+                <!-- Sizing of icons at screens larger than mobile -->
+                <span class="fa-stack fa-3x d-none d-sm-block">
+                  <i class="fa fa-circle fa-stack-2x text-white"></i>
+                  <i class="{{link.image.url}} fa-stack-1x text-{{varNavColorDark}}"></i>
+                </span>
+
+                <!-- Sizing of icons at mobile screens -->
+                <span class="fa-stack fa-2x d-block d-sm-none">
+                  <i class="fa fa-circle fa-stack-2x text-white"></i>
+                  <i class="{{link.image.url}} fa-stack-1x text-{{varNavColorDark}}"></i>
+                </span>
+              </div>
+              <a class="stretched-link text-decoration-none text-dark" href="{{ link.url| escape }}" title="{{ link.tooltip}}">
+                <!-- Name of tile at screens larger than mobile -->
+                <h5 class="card-title text-center d-none d-sm-block fw-bold">{{link.name}}</h5>
+                <!-- Name of tile mobile screens-->
+                <h6 class="card-title text-center d-block d-sm-none">{{link.name}}</h6>
+                <!-- Stretched link to make entire card clickable -->
+              </a>
+              <!-- Description of tiles at screens larger than mobile -->
+              <p class="card-text text-center d-none d-sm-block">{{link.description}}</p>
+            </div>
+
+            <!-- Bar at the bottom of card to show only on screens larger than mobile -->
+            <div class="progress m-3 d-none d-sm-block bg-{{varNavColorDark}}" style="height:7px">
+              <div class="progress-bar" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+{% elsif linkobj.mspp_displayorder == user.ic_gssob2cmapping %}
+<div class="col" data-title="{{link.name}}">
+          <!-- Create the cards -->
+
+          <div class="card h-100  bg-{{varNavColor}}">
+            <div class="card-body">
+              <!-- Align the icon on mobile view to the left hand side of the card -->
+              <div class="d-flex justify-content-start">
+                <!-- Info icon to toggle popover with the card description on mobile view -->
+                <i class="fa-solid fa-circle-info text-{{varNavColorDark}} text-center d-block d-sm-none" tabindex="0" data-bs-trigger="focus" data-bs-toggle="popover" data-timeout="3000" data-bs-placement="top" data-bs-content="{{link.description}}" style="position: relative; z-index: 2;"></i>
+              </div>
+
+              <!-- Tile icons made dynamic based on the tile -->
+              <div class="d-flex justify-content-center py-2">
+                <!-- Sizing of icons at screens larger than mobile -->
+                <span class="fa-stack fa-3x d-none d-sm-block">
+                  <i class="fa fa-circle fa-stack-2x text-white"></i>
+                  <i class="{{link.image.url}} fa-stack-1x text-{{varNavColorDark}}"></i>
+                </span>
+
+                <!-- Sizing of icons at mobile screens -->
+                <span class="fa-stack fa-2x d-block d-sm-none">
+                  <i class="fa fa-circle fa-stack-2x text-white"></i>
+                  <i class="{{link.image.url}} fa-stack-1x text-{{varNavColorDark}}"></i>
+                </span>
+              </div>
+              <a class="stretched-link text-decoration-none text-dark" href="{{ link.url| escape }}" title="{{ link.tooltip}}">
+                <!-- Name of tile at screens larger than mobile -->
+                <h5 class="card-title text-center d-none d-sm-block fw-bold">{{link.name}}</h5>
+                <!-- Name of tile mobile screens-->
+                <h6 class="card-title text-center d-block d-sm-none">{{link.name}}</h6>
+                <!-- Stretched link to make entire card clickable -->
+              </a>
+              <!-- Description of tiles at screens larger than mobile -->
+              <p class="card-text text-center d-none d-sm-block">{{link.description}}</p>
+            </div>
+
+            <!-- Bar at the bottom of card to show only on screens larger than mobile -->
+            <div class="progress m-3 d-none d-sm-block bg-{{varNavColorDark}}" style="height:7px">
+              <div class="progress-bar" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+
+{% elsif linkobj.mspp_displayorder == 7 and user.ic_gssob2cmapping == 3 %}
+<div class="col" data-title="{{link.name}}">
+          <!-- Create the cards -->
+
+          <div class="card h-100  bg-{{varNavColor}}">
+            <div class="card-body">
+              <!-- Align the icon on mobile view to the left hand side of the card -->
+              <div class="d-flex justify-content-start">
+                <!-- Info icon to toggle popover with the card description on mobile view -->
+                <i class="fa-solid fa-circle-info text-{{varNavColorDark}} text-center d-block d-sm-none" tabindex="0" data-bs-trigger="focus" data-bs-toggle="popover" data-timeout="3000" data-bs-placement="top" data-bs-content="{{link.description}}" style="position: relative; z-index: 2;"></i>
+              </div>
+
+              <!-- Tile icons made dynamic based on the tile -->
+              <div class="d-flex justify-content-center py-2">
+                <!-- Sizing of icons at screens larger than mobile -->
+                <span class="fa-stack fa-3x d-none d-sm-block">
+                  <i class="fa fa-circle fa-stack-2x text-white"></i>
+                  <i class="{{link.image.url}} fa-stack-1x text-{{varNavColorDark}}"></i>
+                </span>
+
+                <!-- Sizing of icons at mobile screens -->
+                <span class="fa-stack fa-2x d-block d-sm-none">
+                  <i class="fa fa-circle fa-stack-2x text-white"></i>
+                  <i class="{{link.image.url}} fa-stack-1x text-{{varNavColorDark}}"></i>
+                </span>
+              </div>
+              <a class="stretched-link text-decoration-none text-dark" href="{{ link.url| escape }}" title="{{ link.tooltip}}">
+                <!-- Name of tile at screens larger than mobile -->
+                <h5 class="card-title text-center d-none d-sm-block fw-bold">{{link.name}}</h5>
+                <!-- Name of tile mobile screens-->
+                <h6 class="card-title text-center d-block d-sm-none">{{link.name}}</h6>
+                <!-- Stretched link to make entire card clickable -->
+              </a>
+              <!-- Description of tiles at screens larger than mobile -->
+              <p class="card-text text-center d-none d-sm-block">{{link.description}}</p>
+            </div>
+
+            <!-- Bar at the bottom of card to show only on screens larger than mobile -->
+            <div class="progress m-3 d-none d-sm-block bg-{{varNavColorDark}}" style="height:7px">
+              <div class="progress-bar" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+        {% elsif linkobj.mspp_displayorder == 8  and user.ic_gssob2cmapping == 2 %}
+<div class="col" data-title="{{link.name}}">
+          <!-- Create the cards -->
+
+          <div class="card h-100  bg-{{varNavColor}}">
+            <div class="card-body">
+              <!-- Align the icon on mobile view to the left hand side of the card -->
+              <div class="d-flex justify-content-start">
+                <!-- Info icon to toggle popover with the card description on mobile view -->
+                <i class="fa-solid fa-circle-info text-{{varNavColorDark}} text-center d-block d-sm-none" tabindex="0" data-bs-trigger="focus" data-bs-toggle="popover" data-timeout="3000" data-bs-placement="top" data-bs-content="{{link.description}}" style="position: relative; z-index: 2;"></i>
+              </div>
+
+              <!-- Tile icons made dynamic based on the tile -->
+              <div class="d-flex justify-content-center py-2">
+                <!-- Sizing of icons at screens larger than mobile -->
+                <span class="fa-stack fa-3x d-none d-sm-block">
+                  <i class="fa fa-circle fa-stack-2x text-white"></i>
+                  <i class="{{link.image.url}} fa-stack-1x text-{{varNavColorDark}}"></i>
+                </span>
+
+                <!-- Sizing of icons at mobile screens -->
+                <span class="fa-stack fa-2x d-block d-sm-none">
+                  <i class="fa fa-circle fa-stack-2x text-white"></i>
+                  <i class="{{link.image.url}} fa-stack-1x text-{{varNavColorDark}}"></i>
+                </span>
+              </div>
+              <a class="stretched-link text-decoration-none text-dark" href="{{ link.url| escape }}" title="{{ link.tooltip}}">
+                <!-- Name of tile at screens larger than mobile -->
+                <h5 class="card-title text-center d-none d-sm-block fw-bold">{{link.name}}</h5>
+                <!-- Name of tile mobile screens-->
+                <h6 class="card-title text-center d-block d-sm-none">{{link.name}}</h6>
+                <!-- Stretched link to make entire card clickable -->
+              </a>
+              <!-- Description of tiles at screens larger than mobile -->
+              <p class="card-text text-center d-none d-sm-block">{{link.description}}</p>
+            </div>
+
+            <!-- Bar at the bottom of card to show only on screens larger than mobile -->
+            <div class="progress m-3 d-none d-sm-block bg-{{varNavColorDark}}" style="height:7px">
+              <div class="progress-bar" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+       
+       {% elsif linkobj.mspp_displayorder == 9 and user.ic_gssob2cmapping == 6 %}
+<div class="col" data-title="{{link.name}}">
+          <!-- Create the cards -->
+
+          <div class="card h-100  bg-{{varNavColor}}">
+            <div class="card-body">
+              <!-- Align the icon on mobile view to the left hand side of the card -->
+              <div class="d-flex justify-content-start">
+                <!-- Info icon to toggle popover with the card description on mobile view -->
+                <i class="fa-solid fa-circle-info text-{{varNavColorDark}} text-center d-block d-sm-none" tabindex="0" data-bs-trigger="focus" data-bs-toggle="popover" data-timeout="3000" data-bs-placement="top" data-bs-content="{{link.description}}" style="position: relative; z-index: 2;"></i>
+              </div>
+
+              <!-- Tile icons made dynamic based on the tile -->
+              <div class="d-flex justify-content-center py-2">
+                <!-- Sizing of icons at screens larger than mobile -->
+                <span class="fa-stack fa-3x d-none d-sm-block">
+                  <i class="fa fa-circle fa-stack-2x text-white"></i>
+                  <i class="{{link.image.url}} fa-stack-1x text-{{varNavColorDark}}"></i>
+                </span>
+
+                <!-- Sizing of icons at mobile screens -->
+                <span class="fa-stack fa-2x d-block d-sm-none">
+                  <i class="fa fa-circle fa-stack-2x text-white"></i>
+                  <i class="{{link.image.url}} fa-stack-1x text-{{varNavColorDark}}"></i>
+                </span>
+              </div>
+              <a class="stretched-link text-decoration-none text-dark" href="{{ link.url| escape }}" title="{{ link.tooltip}}">
+                <!-- Name of tile at screens larger than mobile -->
+                <h5 class="card-title text-center d-none d-sm-block fw-bold">{{link.name}}</h5>
+                <!-- Name of tile mobile screens-->
+                <h6 class="card-title text-center d-block d-sm-none">{{link.name}}</h6>
+                <!-- Stretched link to make entire card clickable -->
+              </a>
+              <!-- Description of tiles at screens larger than mobile -->
+              <p class="card-text text-center d-none d-sm-block">{{link.description}}</p>
+            </div>
+
+            <!-- Bar at the bottom of card to show only on screens larger than mobile -->
+            <div class="progress m-3 d-none d-sm-block bg-{{varNavColorDark}}" style="height:7px">
+              <div class="progress-bar" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+        {% elsif linkobj.mspp_displayorder == 10  and user.ic_gssob2cmapping == 5 %}
+<div class="col" data-title="{{link.name}}">
+          <!-- Create the cards -->
+
+          <div class="card h-100  bg-{{varNavColor}}">
+            <div class="card-body">
+              <!-- Align the icon on mobile view to the left hand side of the card -->
+              <div class="d-flex justify-content-start">
+                <!-- Info icon to toggle popover with the card description on mobile view -->
+                <i class="fa-solid fa-circle-info text-{{varNavColorDark}} text-center d-block d-sm-none" tabindex="0" data-bs-trigger="focus" data-bs-toggle="popover" data-timeout="3000" data-bs-placement="top" data-bs-content="{{link.description}}" style="position: relative; z-index: 2;"></i>
+              </div>
+
+              <!-- Tile icons made dynamic based on the tile -->
+              <div class="d-flex justify-content-center py-2">
+                <!-- Sizing of icons at screens larger than mobile -->
+                <span class="fa-stack fa-3x d-none d-sm-block">
+                  <i class="fa fa-circle fa-stack-2x text-white"></i>
+                  <i class="{{link.image.url}} fa-stack-1x text-{{varNavColorDark}}"></i>
+                </span>
+
+                <!-- Sizing of icons at mobile screens -->
+                <span class="fa-stack fa-2x d-block d-sm-none">
+                  <i class="fa fa-circle fa-stack-2x text-white"></i>
+                  <i class="{{link.image.url}} fa-stack-1x text-{{varNavColorDark}}"></i>
+                </span>
+              </div>
+              <a class="stretched-link text-decoration-none text-dark" href="{{ link.url| escape }}" title="{{ link.tooltip}}">
+                <!-- Name of tile at screens larger than mobile -->
+                <h5 class="card-title text-center d-none d-sm-block fw-bold">{{link.name}}</h5>
+                <!-- Name of tile mobile screens-->
+                <h6 class="card-title text-center d-block d-sm-none">{{link.name}}</h6>
+                <!-- Stretched link to make entire card clickable -->
+              </a>
+              <!-- Description of tiles at screens larger than mobile -->
+              <p class="card-text text-center d-none d-sm-block">{{link.description}}</p>
+            </div>
+
+            <!-- Bar at the bottom of card to show only on screens larger than mobile -->
+            <div class="progress m-3 d-none d-sm-block bg-{{varNavColorDark}}" style="height:7px">
+              <div class="progress-bar" style="width: 100%"></div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        {% endfor %} 
+        {%endfor%}
+      </div>
+    </div>
+
+    
+{% if user %}
+<script>
+  // JQuery to add the data timeout attribute to the popover to hide after a certain number of seconds
+  $(document).ready(function () {
+    debugger;
+    
+
+    $('[data-bs-toggle="popover"][data-timeout]').on('shown.bs.popover', function () {
+      this_popover = $(this);
+      setTimeout(function () {
+        this_popover.popover('hide');
+      }, $(this).data("timeout"));
+    });
+
+
+    //Enable popover everywhere
+    let popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+    let popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+      return new bootstrap.Popover(popoverTriggerEl)
+    });
+
+    //Enable tooltips everywhere
+    let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+      return new bootstrap.Tooltip(tooltipTriggerEl)
+    });
+  });
+
+  //Get search box and cards into variables
+  let searchInput = document.getElementById('HeaderSearchBox');
+  //let searchInputSm = document.getElementById('HeaderSearchBoxSm');
+  let cardsList = document.querySelectorAll('.tab-pane .row .col');
+
+  //Function to loop through cards to check the value of string
+  function getResults(e) {
+    cardsList.forEach(val => {
+      val.style.display = 'none';
+      val.dataset.title.toLowerCase().includes(e.target.value.toLowerCase()) ?
+        val.style.display = 'block' : null;
+    })
+  }
+  //Call function on keyup event of the searchbox
+  searchInput.addEventListener('keyup', getResults);
+  //searchInputSm.addEventListener('keyup', getResults);
+</script>
+{% endif %}
+<div class="row sectionBlockLayout text-start" style="display: flex; flex-wrap: wrap; margin: 0px; min-height: auto; padding: 8px;">
+  <div class="container" style="padding: 0px; display: flex; flex-wrap: wrap;"><div class="col-lg-12 columnBlockLayout" style="flex-grow: 1; display: flex; flex-direction: column; min-width: 250px;"></div></div>
+</div>
+
+
+
+
+
+//Account/SignIn/PageCopy
+
+<script>
+  
+  //Show loading spinner 
+  let loadingSpinner = document.getElementById('loadingSpinner');
+  if (loadingSpinner){
+    loadingSpinner.style.display="block";
+  }
+  
+
+  document.addEventListener("DOMContentLoaded", () => {
+    //Select parts of sign in page to hide 
+    const navAccountTabs = document.querySelector(".nav-account");
+    const loginHeading = document.querySelector(".login-heading-section");
+
+    debugger;
+
+    //Create an array containing both buttons
+    let signInButtons = document.querySelectorAll(".btn.btn-primary.btn-line");
+   
+    //Hide unneccessary text 
+    if (loginHeading) {
+      loginHeading.style.display = "none";
+    }
+    if (navAccountTabs) {
+      navAccountTabs.style.display = "none";
+    }
+
+    
+
+    // Get the column the default sign in form is in
+    const signInFormColumn = document.querySelector("#mainContent > div.row ");
+
+    // Create a new div
+    const personaDiv = document.createElement("div");
+
+    // Get the sign in form
+    const signInForm = document.querySelector("#mainContent > div.row > div.col-md-6 > form");
+
+    // Remove the sign in form from the DOM
+    signInForm.remove();
+
+    // Clone the form for students and staff and add class
+    let studentStaffForm = signInForm.cloneNode(true);
+    studentStaffForm.classList.add("mt-3");
+
+    // Add classes to the student staff form
+    let studentStaffFormTag = studentStaffForm.querySelector("div");
+	
+	studentStaffFormTag.classList.add("d-grid","gap-2","col-12","col-sm-6","col-md-6", "col-lg-3","mx-auto");
+    
+   
+    //Add the div to the form column 
+    signInFormColumn.appendChild(personaDiv);
+
+    // Create the html elements for the navigation tabs 
+    personaDiv.innerHTML = `
+  
+<div class="tab-content" id="signInTabContent">
+
+
+
+  <div class="tab-pane fade show active" id="student-tab-pane" role="tabpanel" aria-labelledby="studentTab" tabindex="0">
+    <div class="text-center m-3">
+      <h2 class="fs-4 fw-bolder">Welcome to My Imperial</h2>
+    </div>
+    <p class="fs-5">
+Welcome to Imperial College London's Outreach application platform. You can Login or Register for an account using the buttons below.</p>
+    <div class="fs-5">
+	<p>Application guidance for participants:</p>
+	<p><b>Applicants:</b><br>Please create a Student account to apply for the Outreach. Please ensure you use your own email address for the application and follow the <a href = "https://www.imperial.ac.uk/be-inspired/global-summer-school/applying/">application guidance online.</a></p>
+	<p><b>Parent/Guardians:</b><br>Please create a Parent/Guardian account to submit supporting information for your child's Outreach application. Once your child has submitted their application you will receive an email with further information. Please ensure you use the same email address to create an account that your child has listed for you in their application. Further <a href ="https://www.imperial.ac.uk/be-inspired/global-summer-school/residential-programme/information-for-guardians/">information for parents and guardians</a> can be found online.</p>
+<p><b>Teachers:</b><br>Please create a Teacher account to submit a supporting statement for your student's Outreach application. Once your student has submitted their application you will receive an email with further information. Please ensure you use the same email address to create an account that your student has listed for you in their application. Further <a href = "https://www.imperial.ac.uk/be-inspired/global-summer-school/residential-programme/resources-for-teachers/">information for teachers</a> including what to include in your supporting statement can be found online.</p>	
+	</div>
+    <a href = "https://www.imperial.ac.uk/be-inspired/global-summer-school/contact-us/"><button class="btn btn-outline-primary" type="button" data-toggle="modal" data-target="https://www.imperial.ac.uk/be-inspired/global-summer-school/contact-us/">Contact Us
+    </button></a>
+    
+  </div>
+  
+  
+     <div class="tab-pane fade " id="applicant-tab-pane" role="tabpanel" aria-labelledby="applicantTab"
+    tabindex="0">
+    
+  </div>
+ 
+  </div>
+
+</div>
+    `;
+
+
+    // Get references to the tab content panes
+    const studentTabPane = document.querySelector("#student-tab-pane");
+    
+    // Append the modified form to each tab content pane
+    studentTabPane.appendChild(studentStaffForm.cloneNode(true));
+   
+document.querySelectorAll('button[type="submit"]').forEach(btn => {
+  btn.classList.add('w-100');
+});
+
+    // Hide loading spinner
+    loadingSpinner.style.display="none";
+  });
+</script>
+<style>
+  a {
+    
+    font-size: 1.25rem;
+
+  }
+  </style>
 
